@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador 360°</title>
+    <style>
+        body { 
+            display: flex; 
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            background: #111; 
+            margin: 0;
+        }
+        #logo {
+            max-width: 200px; /* Ajuste o tamanho conforme necessário */
+            margin-bottom: 20px;
+        }
+        #viewer {
+            max-width: 100%;
+            cursor: grab;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <img id="logo" src="imagens/logotipo.png" alt="Logotipo">
+    <img id="viewer" src="imagens/img (1).png" alt="Visualização 360">
+    
+    <script>
+        const totalImages = 250;
+        let currentFrame = 1;
+        let isDragging = false;
+        let startX = 0;
+        let viewer = document.getElementById("viewer");
+        const sensitivity = 1;
+
+        function updateImage(index) {
+            if (index < 1) index = totalImages;
+            if (index > totalImages) index = 1;
+            viewer.src = `imagens/img (${index}).png`;
+            currentFrame = index;
+        }
+
+        function startDrag(e) {
+            isDragging = true;
+            startX = e.clientX || e.touches[0].clientX;
+        }
+
+        function dragMove(e) {
+            if (!isDragging) return;
+
+            let moveX = (e.clientX || e.touches[0].clientX) - startX;
+            if (Math.abs(moveX) > sensitivity) {
+                updateImage(currentFrame + (moveX > 0 ? -1 : 1));
+                startX = e.clientX || e.touches[0].clientX;
+            }
+        }
+
+        function endDrag() {
+            isDragging = false;
+        }
+
+        viewer.addEventListener("mousedown", startDrag);
+        viewer.addEventListener("mousemove", dragMove);
+        viewer.addEventListener("mouseup", endDrag);
+        viewer.addEventListener("mouseleave", endDrag);
+
+        viewer.addEventListener("touchstart", startDrag);
+        viewer.addEventListener("touchmove", dragMove);
+        viewer.addEventListener("touchend", endDrag);
+    </script>
+</body>
+</html>
